@@ -58,6 +58,7 @@ public:
 
 	static const VideoDriverInfo &getVideoDriverInfo(irr::video::E_DRIVER_TYPE type);
 	static float getDisplayDensity();
+	static bool isHighDpi();
 
 	bool setupTopLevelWindow();
 	bool setWindowIcon();

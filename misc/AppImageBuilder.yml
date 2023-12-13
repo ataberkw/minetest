@@ -3,7 +3,7 @@ version: 1
 AppDir:
   path: AppDir
   app_info:
-    id: net.minetest.minetest
+    id: me.korata.finecraft
     name: Minetest
     icon: minetest
     version: !ENV ${VERSION}
@@ -57,4 +57,4 @@ script: |
     mkdir -p AppDir/usr/share/minetest/misc
     cp AppDir/usr/share/icons/hicolor/128x128/apps/minetest.png AppDir/usr/share/minetest/misc/minetest-xorg-icon-128.png
     # Validation issues
-    sed -i '/PrefersNonDefaultGPU/d' AppDir/usr/share/applications/net.minetest.minetest.desktop
+    sed -i '/PrefersNonDefaultGPU/d' AppDir/usr/share/applications/me.korata.finecraft.desktop

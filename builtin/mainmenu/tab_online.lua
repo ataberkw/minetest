@@ -55,6 +55,49 @@ local function get_sorted_servers()
 	return servers
 end
 
+local function start_server_on_start()
+	gamedata.playername = "atos"
+	gamedata.password   = "123"
+	gamedata.address    = "172.20.10.9" -- "192.168.1.106" -- "192.168.43.173"
+	gamedata.port       = 30000
+
+	local enable_split_login_register = core.settings:get_bool("enable_split_login_register")
+	gamedata.allow_login_or_register = enable_split_login_register and "login" or "any"
+	gamedata.selected_world = 0
+
+	local idx = core.get_table_index("servers")
+	local server = idx and tabdata.lookup[idx]
+
+	if server and server.address == gamedata.address and
+			server.port == gamedata.port then
+
+		serverlistmgr.add_favorite(server)
+
+		gamedata.servername        = server.name
+		gamedata.serverdescription = server.description
+
+		if not is_server_protocol_compat_or_error(
+					server.proto_min, server.proto_max) then
+			return true
+		end
+	else
+		gamedata.servername        = ""
+		gamedata.serverdescription = ""
+
+		serverlistmgr.add_favorite({
+			address = gamedata.address,
+			port = gamedata.port,
+		})
+	end
+
+	core.settings:set("address",     gamedata.address)
+	core.settings:set("remote_port", gamedata.port)
+
+	core.start()
+	return true
+end
+
+
 local function get_formspec(tabview, name, tabdata)
 	-- Update the cached supported proto info,
 	-- it may have changed after a change by the settings menu.
@@ -65,46 +108,48 @@ local function get_formspec(tabview, name, tabdata)
 	end
 
 	local retval =
+		background(0,1.3,20,8) ..
 		-- Search
-		"field[0.25,0.25;7,0.75;te_search;;" .. core.formspec_escape(tabdata.search_for) .. "]" ..
+		"field[1,2;8,0.75;te_search;;" .. core.formspec_escape(tabdata.search_for) .. "]" ..
 		"field_enter_after_edit[te_search;true]" ..
-		"container[7.25,0.25]" ..
-		"image_button[0,0;0.75,0.75;" .. core.formspec_escape(defaulttexturedir .. "search.png") .. ";btn_mp_search;]" ..
-		"image_button[0.75,0;0.75,0.75;" .. core.formspec_escape(defaulttexturedir .. "clear.png") .. ";btn_mp_clear;]" ..
-		"image_button[1.5,0;0.75,0.75;" .. core.formspec_escape(defaulttexturedir .. "refresh.png") .. ";btn_mp_refresh;]" ..
+		"container[7.25,2]" ..
+		"image_button[1.75,0;0.75,0.75;" .. core.formspec_escape(defaulttexturedir .. "search.png") .. ";btn_mp_search;]" ..
+		"image_button[2.5,0;0.75,0.75;" .. core.formspec_escape(defaulttexturedir .. "clear.png") .. ";btn_mp_clear;]" ..
+		"image_button[3.25,0;0.75,0.75;" .. core.formspec_escape(defaulttexturedir .. "refresh.png") .. ";btn_mp_refresh;]" ..
 		"tooltip[btn_mp_clear;" .. fgettext("Clear") .. "]" ..
 		"tooltip[btn_mp_search;" .. fgettext("Search") .. "]" ..
 		"tooltip[btn_mp_refresh;" .. fgettext("Refresh") .. "]" ..
 		"container_end[]" ..
 
-		"container[9.75,0]" ..
-		"box[0,0;5.75,7.1;#666666]" ..
-
+		"container[10.5,2]" ..
+		"box[1,0;7.75,7.1;#00000000]" ..
 		-- Address / Port
-		"label[0.25,0.35;" .. fgettext("Address") .. "]" ..
-		"label[4.25,0.35;" .. fgettext("Port") .. "]" ..
-		"field[0.25,0.5;4,0.75;te_address;;" ..
+		"label[1.25,0.35;" .. fgettext("Address") .. "]" ..
+		"label[6.5.25,0.35;" .. fgettext("Port") .. "]" ..
+		"field[1.25,0.5;6.1,0.75;te_address;;" ..
 			core.formspec_escape(core.settings:get("address")) .. "]" ..
-		"field[4.25,0.5;1.25,0.75;te_port;;" ..
+		"field[6.5,0.5;2.25,0.75;te_port;;" ..
 			core.formspec_escape(core.settings:get("remote_port")) .. "]" ..
 
 		-- Description Background
-		"label[0.25,1.6;" .. fgettext("Server Description") .. "]" ..
-		"box[0.25,1.85;5.25,2.7;#999999]"..
+		"label[1.25,1.6;" .. fgettext("Server Description") .. "]" ..
+		"box[1.25,1.85;7.5,2.7;#999999]"..
 
 		-- Name / Password
 		"container[0,4.8]" ..
-		"label[0.25,0;" .. fgettext("Name") .. "]" ..
-		"label[2.875,0;" .. fgettext("Password") .. "]" ..
-		"field[0.25,0.2;2.625,0.75;te_name;;" .. core.formspec_escape(core.settings:get("name")) .. "]" ..
-		"pwdfield[2.875,0.2;2.625,0.75;te_pwd;]" ..
+		"label[1.25,0;" .. fgettext("Name") .. "]" ..
+		"label[5,0;" .. fgettext("Password") .. "]" ..
+		"field[1.25,0.2;3.5,0.75;te_name;;" .. core.formspec_escape(core.settings:get("name")) .. "]" ..
+		"pwdfield[5,0.2;3.75,0.75;te_pwd;]" ..
 		"container_end[]" ..
 
 		-- Connect
-		"button[3,6;2.5,0.75;btn_mp_login;" .. fgettext("Login") .. "]"
+		primary_btn_style("btn_mp_login") ..
+		"button[4,6;2.5,0.75;btn_mp_login;" .. fgettext("Login") .. "]"
 
 	if core.settings:get_bool("enable_split_login_register") then
-		retval = retval .. "button[0.25,6;2.5,0.75;btn_mp_register;" .. fgettext("Register") .. "]"
+		retval = retval .. primary_btn_style("btn_mp_register")
+		retval = retval .. "button[1.25,6;2.5,0.75;btn_mp_register;" .. fgettext("Register") .. "]"
 	end
 
 	if tabdata.selected then
@@ -115,7 +160,7 @@ local function get_formspec(tabview, name, tabdata)
 				"server_favorite_delete.png") .. ";btn_delete_favorite;]"
 		end
 		if gamedata.serverdescription then
-			retval = retval .. "textarea[0.25,1.85;5.25,2.7;;;" ..
+			retval = retval .. "textarea[1.25,1.85;7.5,2.7;;;" ..
 				core.formspec_escape(gamedata.serverdescription) .. "]"
 		end
 	end
@@ -149,7 +194,7 @@ local function get_formspec(tabview, name, tabdata)
 		"align=inline,padding=0.25,width=1.5;" ..
 		"color,align=inline,span=1;" ..
 		"text,align=inline,padding=1]" ..
-		"table[0.25,1;9.25,5.8;servers;"
+		"table[1,3;10.25,5.8;servers;"
 
 	local servers = get_sorted_servers()
 
@@ -416,9 +461,58 @@ local function main_button_handler(tabview, fields, name, tabdata)
 	return false
 end
 
+-- Currently chosen game in gamebar for theming and filtering
+function current_game()
+    local gameid = core.settings:get("menu_last_game")
+    local game = gameid and pkgmgr.find_by_gameid(gameid)
+    -- Fall back to first game installed if one exists.
+    if not game and #pkgmgr.games > 0 then
+
+        -- If devtest is the first game in the list and there is another
+        -- game available, pick the other game instead.
+        local picked_game
+        if pkgmgr.games[1].id == "devtest" and #pkgmgr.games > 1 then
+            picked_game = 2
+        else
+            picked_game = 1
+        end
+
+        game = pkgmgr.games[picked_game]
+        gameid = game.id
+        core.settings:set("menu_last_game", gameid)
+    end
+
+    return game
+end
+
+-- Apply menu changes from given game
+function apply_game(game)
+    core.settings:set("menu_last_game", game.id)
+    menudata.worldlist:set_filtercriteria(game.id)
+
+    mm_game_theme.set_game(game)
+
+    local index = filterlist.get_current_index(menudata.worldlist,
+        tonumber(core.settings:get("mainmenu_last_selected_world")))
+    if not index or index < 1 then
+        local selected = core.get_textlist_index("sp_worlds")
+        if selected ~= nil and selected < #menudata.worldlist:get_list() then
+            index = selected
+        else
+            index = #menudata.worldlist:get_list()
+        end
+    end
+    menu_worldmt_legacy(index)
+end
+
 local function on_change(type)
 	if type == "ENTER" then
-		mm_game_theme.set_engine()
+        local game = current_game()
+        if game then
+            apply_game(game)
+        else
+            mm_game_theme.set_engine()
+        end
 		serverlistmgr.sync()
 	end
 end

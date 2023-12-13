@@ -223,6 +223,14 @@ msgid "World:"
 msgstr "Dünya:"
 
 #: builtin/mainmenu/dlg_config_world.lua
+msgid "World Settings"
+msgstr "Dünya Ayarları"
+
+#: builtin/mainmenu/dlg_config_world.lua
+msgid "Worlds"
+msgstr "Dünyalar"
+
+#: builtin/mainmenu/dlg_config_world.lua
 msgid "enabled"
 msgstr "etkin"
 

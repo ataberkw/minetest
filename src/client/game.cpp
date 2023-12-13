@@ -160,14 +160,6 @@ struct LocalFormspecHandler : public TextDest
 				return;
 			}
 
-			if (fields.find("btn_exit_os") != fields.end()) {
-				g_gamecallback->exitToOS();
-#ifndef __ANDROID__
-				RenderingEngine::get_raw_device()->closeDevice();
-#endif
-				return;
-			}
-
 			if (fields.find("btn_change_password") != fields.end()) {
 				g_gamecallback->changePassword();
 				return;
@@ -4450,8 +4442,7 @@ void Game::showPauseMenu()
 #endif
 	os		<< "button_exit[4," << (ypos++) << ";3,0.5;btn_exit_menu;"
 		<< strgettext("Exit to Menu") << "]";
-	os		<< "button_exit[4," << (ypos++) << ";3,0.5;btn_exit_os;"
-		<< strgettext("Exit to OS")   << "]"
+	os
 		<< "textarea[7.5,0.25;3.9,6.25;;" << control_text << ";]"
 		<< "textarea[0.4,0.25;3.9,6.25;;" << PROJECT_NAME_C " " VERSION_STRING "\n"
 		<< "\n"

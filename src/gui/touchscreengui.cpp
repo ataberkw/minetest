@@ -39,6 +39,13 @@ TouchScreenGUI *g_touchscreengui;
 
 const std::string button_image_names[] = {
 	"jump_btn.png",
+	"inv_btn.png",
+	"chat_btn.png",
+	"exit_btn.png",
+	"minimap_btn.png",
+	"zoom.png",
+	"camera_btn.png",
+	"drop_btn.png",
 	"down.png",
 	"zoom.png",
 	"aux1_btn.png"
@@ -254,6 +261,18 @@ void AutoHideButtonBar::addButton(touch_gui_button_id button_id, const wchar_t *
 	load_button_texture(btn.get(), btn_image, current_button, m_texturesource, m_driver);
 
 	m_buttons.push_back(btn);
+}
+
+void TouchScreenGUI::initToggleButton(touch_gui_button_id id,
+		const rect<s32> &button_rect, const std::wstring &caption,
+		bool immediate_release, float repeat_delay)
+{
+	initButton(id, button_rect, caption, immediate_release, repeat_delay);
+
+	button_info *btn = &m_buttons[id];
+	btn->toggleable = button_info::SECOND_TEXTURE;
+	btn->textures.push_back(button_image_names[id]);
+	btn->textures.push_back(button_image_names[id] + "_pressed.png");
 }
 
 void AutoHideButtonBar::addToggleButton(touch_gui_button_id button_id, const wchar_t *caption,
@@ -480,27 +499,72 @@ void TouchScreenGUI::init(ISimpleTextureSource *tsrc)
 
 	// init jump button
 	initButton(jump_id,
-			rect<s32>(m_screensize.X - 1.75f * button_size,
-					m_screensize.Y - button_size,
-					m_screensize.X - 0.25f * button_size,
-					m_screensize.Y),
+			rect<s32>(m_screensize.X -  2.0f * button_size,
+					m_screensize.Y - button_size - button_size - 50.0f,
+					m_screensize.X - 1.0f * button_size,
+					m_screensize.Y - button_size - 50.0f),
 			L"x", false);
+
+
+	initButton(inventory_id,
+			rect<s32>(m_screensize.X * 3 / 4,
+					m_screensize.Y - button_size,
+					m_screensize.X * 3 / 4 + button_size,
+					m_screensize.Y),
+			L"chat", false);
+	
+	initButton(chat_id,
+			rect<s32>(m_screensize.X - button_size,
+					0,
+					m_screensize.X,
+					button_size),
+			L"chat", false);
+
+	s32 top_button_size = button_size * .75f;
+	// TOP SECTION START ---------------------------------------
+	initButton(exit_id, 
+			rect<s32>(m_screensize.X / 2 - top_button_size * 2.0f,
+				0,
+				m_screensize.X / 2 - top_button_size * 1.0f,
+				top_button_size),
+			L"exit", false);
+
+	initButton(minimap_id, 
+			rect<s32>(m_screensize.X / 2 - top_button_size * 1.0f,
+				0,
+				m_screensize.X / 2,
+				top_button_size),
+			L"minimap", false);
+
+	initButton(zoom_id,
+			rect<s32>(m_screensize.X / 2,
+				0,
+				m_screensize.X / 2 + top_button_size,
+				top_button_size),
+			L"zoom", false);
+
+	initButton(camera_id,
+			rect<s32>(m_screensize.X / 2 + top_button_size,
+				0,
+				m_screensize.X / 2 + top_button_size * 2,
+				top_button_size),
+			L"camera", false);
+	//TOP SECTION END ---------------------------------------
+
+	initButton(drop_id, 
+			rect<s32>(m_screensize.X - button_size,
+				m_screensize.Y / 3 - button_size / 2,
+				m_screensize.X,
+				m_screensize.Y / 3 + button_size / 2),
+			L"drop", false);
 
 	// init crunch button
 	initButton(crunch_id,
-			rect<s32>(m_screensize.X - 3.25f * button_size,
-					m_screensize.Y - button_size,
-					m_screensize.X - 1.75f * button_size,
-					m_screensize.Y),
+			rect<s32>(m_screensize.X - 2.0f * button_size,
+					m_screensize.Y - button_size - 40.f,
+					m_screensize.X - 1.0f * button_size,
+					m_screensize.Y - 40.f),
 			L"H", false);
-
-	// init zoom button
-	initButton(zoom_id,
-			rect<s32>(m_screensize.X - 1.25f * button_size,
-					m_screensize.Y - 4 * button_size,
-					m_screensize.X - 0.25f * button_size,
-					m_screensize.Y - 3 * button_size),
-			L"z", false);
 
 	// init aux1 button
 	if (!m_joystick_triggers_aux1)
@@ -512,10 +576,10 @@ void TouchScreenGUI::init(ISimpleTextureSource *tsrc)
 				L"spc1", false);
 
 	m_settings_bar.init(m_texturesource, "gear_icon.png", settings_starter_id,
-			v2s32(m_screensize.X - 1.25f * button_size,
+			v2s32(0,
 					m_screensize.Y - (SETTINGS_BAR_Y_OFFSET + 1.0f) * button_size
 							+ 0.5f * button_size),
-			v2s32(m_screensize.X - 0.25f * button_size,
+			v2s32(0,
 					m_screensize.Y - SETTINGS_BAR_Y_OFFSET * button_size
 							+ 0.5f * button_size),
 			AHBB_Dir_Right_Left, 3.0f);
@@ -524,28 +588,25 @@ void TouchScreenGUI::init(ISimpleTextureSource *tsrc)
 	m_settings_bar.addButton(noclip_id, L"noclip", "noclip_btn.png");
 	m_settings_bar.addButton(fast_id, L"fast", "fast_btn.png");
 	m_settings_bar.addButton(debug_id, L"debug", "debug_btn.png");
-	m_settings_bar.addButton(camera_id, L"camera", "camera_btn.png");
+	//m_settings_bar.addButton(camera_id, L"camera", "camera_btn.png");
 	m_settings_bar.addButton(range_id, L"rangeview", "rangeview_btn.png");
-	m_settings_bar.addButton(minimap_id, L"minimap", "minimap_btn.png");
-
-	// Chat is shown by default, so chat_hide_btn.png is shown first.
-	m_settings_bar.addToggleButton(toggle_chat_id, L"togglechat",
-			"chat_hide_btn.png", "chat_show_btn.png");
+	//m_settings_bar.addButton(minimap_id, L"minimap", "minimap_btn.png");
 
 	m_rare_controls_bar.init(m_texturesource, "rare_controls.png",
 			rare_controls_starter_id,
-			v2s32(0.25f * button_size,
+			v2s32(0,
 					m_screensize.Y - (RARE_CONTROLS_BAR_Y_OFFSET + 1.0f) * button_size
 							+ 0.5f * button_size),
-			v2s32(0.75f * button_size,
+			v2s32(0,
 					m_screensize.Y - RARE_CONTROLS_BAR_Y_OFFSET * button_size
 							+ 0.5f * button_size),
 			AHBB_Dir_Left_Right, 2.0f);
 
-	m_rare_controls_bar.addButton(chat_id, L"chat", "chat_btn.png");
-	m_rare_controls_bar.addButton(inventory_id, L"inv", "inventory_btn.png");
-	m_rare_controls_bar.addButton(drop_id, L"drop", "drop_btn.png");
-	m_rare_controls_bar.addButton(exit_id, L"exit", "exit_btn.png");
+	//m_rare_controls_bar.addButton(chat_id, L"chat", "chat_btn.png");
+	//m_rare_controls_bar.addButton(inventory_id, L"inv", "inventory_btn.png");
+	// Chat is shown by default, so chat_hide_btn.png is shown first.
+	//m_rare_controls_bar.addButton(drop_id, L"drop", "drop_btn.png");
+	//m_rare_controls_bar.addButton(exit_id, L"exit", "exit_btn.png");
 
 	m_initialized = true;
 }

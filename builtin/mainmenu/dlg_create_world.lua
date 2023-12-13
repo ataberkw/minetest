@@ -280,9 +280,9 @@ local function create_world_formspec(dialogdata)
 
 	local retval =
 		"size[12.25,7,true]" ..
-
+		fill_background() ..
 		-- Left side
-		"container[0,0]"..
+		"container[.3,.4]"..
 		"field[0.3,0.6;6,0.5;te_world_name;" ..
 		fgettext("World name") ..
 		";" .. core.formspec_escape(dialogdata.worldname) .. "]" ..
@@ -313,16 +313,17 @@ local function create_world_formspec(dialogdata)
 
 	retval = retval ..
 		"container_end[]" ..
-
 		-- Right side
-		"container[6.2,0]"..
+		"container[6.2,.2]"..
 		label_flags .. str_flags ..
 		label_spflags .. str_spflags ..
 		"container_end[]"..
 
 		-- Menu buttons
-		"button[3.25,6.5;3,0.5;world_create_confirm;" .. fgettext("Create") .. "]" ..
-		"button[6.25,6.5;3,0.5;world_create_cancel;" .. fgettext("Cancel") .. "]"
+		primary_btn_style("world_create_confirm") .. 
+		primary_btn_style("world_create_cancel", "red") .. 
+		"button[7.25,6;4,1.2;world_create_confirm;" .. fgettext("Create") .. "]" ..
+		"button[1.25,6;4,1.2;world_create_cancel;" .. fgettext("Cancel") .. "]"
 
 	return retval
 

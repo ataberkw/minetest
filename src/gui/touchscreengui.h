@@ -39,24 +39,25 @@ using namespace irr::gui;
 typedef enum
 {
 	jump_id = 0,
-	crunch_id,
+	inventory_id,
+	chat_id,
+	exit_id,
+	minimap_id,
 	zoom_id,
+	camera_id,
+	drop_id,
+	crunch_id,
 	aux1_id,
 	after_last_element_id,
 	settings_starter_id,
+	top_buttons_id,
 	rare_controls_starter_id,
 	fly_id,
 	noclip_id,
 	fast_id,
 	debug_id,
-	camera_id,
 	range_id,
-	minimap_id,
 	toggle_chat_id,
-	chat_id,
-	inventory_id,
-	drop_id,
-	exit_id,
 	joystick_off_id,
 	joystick_bg_id,
 	joystick_center_id
@@ -252,6 +253,11 @@ private:
 
 	// check if a button has changed
 	void handleChangedButton(const SEvent &event);
+
+	// initialize a toggle butotn
+	void initToggleButton(touch_gui_button_id id, const rect<s32> &button_rect,
+		const std::wstring &caption, bool immediate_release,
+		float repeat_delay = BUTTON_REPEAT_DELAY);
 
 	// initialize a button
 	void initButton(touch_gui_button_id id, const rect<s32> &button_rect,

@@ -50,6 +50,7 @@ AppDir
 /bin/
 /games/*
 !/games/devtest/
+!/games/finecraft/
 /games/devtest/mods/soundstuff/sounds/gitignored_sounds/*
 !/games/devtest/mods/soundstuff/sounds/gitignored_sounds/custom_sounds_here.txt
 /cache
@@ -126,3 +127,4 @@ lib/irrlichtmt
 
 # Generated mod storage database
 client/mod_storage.sqlite
+textures/base/pack/server_flags_damage.png

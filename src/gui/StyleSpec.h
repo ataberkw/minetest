@@ -4,7 +4,7 @@ Copyright (C) 2019 rubenwardy
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 2.1 of the License, or
+the Free Software Foundation; either version 3.0 of the License, or
 (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -19,6 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "client/tile.h" // ITextureSource
 #include "client/fontengine.h"
+#include "client/renderingengine.h"
 #include "debug.h"
 #include "irrlichttypes_extrabloated.h"
 #include "util/string.h"
@@ -58,20 +59,49 @@ public:
 		SOUND,
 		SPACING,
 		SIZE,
+		SCROLLBAR_BGIMG,
+		SCROLLBAR_THUMB_IMG,
+		SCROLLBAR_UP_IMG,
+		SCROLLBAR_DOWN_IMG,
+		SCROLLBAR_THUMB_TOP_IMG,
+		SCROLLBAR_THUMB_BOTTOM_IMG,
 		NUM_PROPERTIES,
 		NONE
 	};
-
-	// State is a bitfield, it's possible to have multiple of these at once
-	enum State : u8
+	enum State
 	{
 		STATE_DEFAULT = 0,
-		STATE_FOCUSED = 1 << 0,
-		STATE_HOVERED = 1 << 1,
-		STATE_PRESSED = 1 << 2,
-		NUM_STATES = 1 << 3, // This includes all permutations
-		STATE_INVALID = 1 << 4,
+		STATE_HOVERED = 1 << 0,
+		STATE_PRESSED = 1 << 1,
+		NUM_STATES = 1 << 2,
+		STATE_INVALID = 1 << 3,
 	};
+
+	// Used in guiConfirmRegistration.cpp, guiKeyChangeMenu.cpp and guiVolumeChange.h
+	static std::array<StyleSpec, NUM_STATES> getButtonStyle(const std::string texture_path = "", std::string color = "") {
+		std::array<StyleSpec, NUM_STATES> ret;
+		color = color != "" ? "_" + color : "";
+
+		const bool high_dpi = RenderingEngine::isHighDpi();
+		const std::string x2 = high_dpi ? ".x2" : "";
+		StyleSpec btn_spec;
+		btn_spec.set(BGIMG, texture_path + "gui/gui_button" + color + x2 + ".png");
+		btn_spec.set(BGIMG_MIDDLE, high_dpi ? "48" : "32");
+		btn_spec.set(BORDER, "false");
+		btn_spec.set(PADDING, high_dpi ? "-30" : "-20");
+
+		ret[STATE_DEFAULT] = btn_spec;
+
+		StyleSpec hovered_spec;
+		hovered_spec.set(BGIMG, texture_path + "gui/gui_button" + color + "_hovered" + x2 + ".png");
+		ret[STATE_HOVERED] = hovered_spec;
+
+		StyleSpec pressed_spec;
+		pressed_spec.set(BGIMG, texture_path + "gui/gui_button" + color + "_pressed" + x2 + ".png");
+		ret[STATE_PRESSED] = pressed_spec;
+
+		return ret;
+	}
 
 private:
 	std::array<bool, NUM_PROPERTIES> property_set{};
@@ -131,6 +161,18 @@ public:
 			return SPACING;
 		} else if (name == "size") {
 			return SIZE;
+		} else if (name == "scrollbar_bgimg") {
+			return SCROLLBAR_BGIMG;
+		} else if (name == "scrollbar_thumb_img") {
+			return SCROLLBAR_THUMB_IMG;
+		} else if (name == "scrollbar_up_img") {
+			return SCROLLBAR_UP_IMG;
+		} else if (name == "scrollbar_down_img") {
+			return SCROLLBAR_DOWN_IMG;
+		} else if (name == "scrollbar_thumb_top_img") {
+			return SCROLLBAR_THUMB_TOP_IMG;
+		} else if (name == "scrollbar_thumb_bottom_img") {
+			return SCROLLBAR_THUMB_BOTTOM_IMG;
 		} else {
 			return NONE;
 		}
@@ -153,8 +195,6 @@ public:
 	{
 		if (name == "default") {
 			return STATE_DEFAULT;
-		} else if (name == "focused") {
-			return STATE_FOCUSED;
 		} else if (name == "hovered") {
 			return STATE_HOVERED;
 		} else if (name == "pressed") {
@@ -184,9 +224,14 @@ public:
 	{
 		StyleSpec temp = styles[StyleSpec::STATE_DEFAULT];
 		temp.state_map = state;
+#ifdef HAVE_TOUCHSCREENGUI
+		// always render pressed as hovered on touchscreen
+		if (state & STATE_PRESSED)
+			state = State(state | STATE_HOVERED);
+#endif
 		for (int i = StyleSpec::STATE_DEFAULT + 1; i <= state; i++) {
 			if ((state & i) != 0) {
-				temp = temp | styles[i];
+				temp |= styles[i];
 			}
 		}
 
