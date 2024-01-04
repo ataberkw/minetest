@@ -410,6 +410,14 @@ msgid "World:"
 msgstr "Dünya:"
 
 #: builtin/mainmenu/dlg_config_world.lua
+msgid "World Settings"
+msgstr "Dünya Ayarları"
+
+#: builtin/mainmenu/dlg_config_world.lua
+msgid "Worlds"
+msgstr "Dünyalar"
+
+#: builtin/mainmenu/dlg_config_world.lua
 msgid "enabled"
 msgstr "etkin"
 
@@ -1478,6 +1486,10 @@ msgstr "KiB/s"
 #: src/client/game.cpp
 msgid "Media..."
 msgstr "Medya..."
+
+#: src/client/game.cpp
+msgid "First time takes a while."
+msgstr "İlk sefer biraz zaman alır."
 
 #: src/client/game.cpp
 msgid "MiB/s"

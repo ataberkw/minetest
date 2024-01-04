@@ -1490,6 +1490,10 @@ msgid "MiB/s"
 msgstr ""
 
 #: src/client/game.cpp
+msgid "First time takes a while."
+msgstr "Η πρώτη φορά παίρνει λίγο χρόνο."
+
+#: src/client/game.cpp
 msgid "Minimap currently disabled by game or mod"
 msgstr ""
 

@@ -1469,6 +1469,10 @@ msgid "Media..."
 msgstr "Vidaŭdaĵoj…"
 
 #: src/client/game.cpp
+msgid "First time takes a while."
+msgstr "Unuafoje longas."
+
+#: src/client/game.cpp
 msgid "MiB/s"
 msgstr "MiB/s"
 

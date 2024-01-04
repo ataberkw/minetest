@@ -1518,6 +1518,10 @@ msgid "Media..."
 msgstr "Медија..."
 
 #: src/client/game.cpp
+msgid "First time takes a while."
+msgstr "Први пут траје мало дуже."
+
+#: src/client/game.cpp
 msgid "MiB/s"
 msgstr "МиБ/с"
 

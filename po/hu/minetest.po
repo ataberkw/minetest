@@ -1469,6 +1469,10 @@ msgid "Media..."
 msgstr "Tartalom..."
 
 #: src/client/game.cpp
+msgid "First time takes a while."
+msgstr "Első alkalommal hosszabb ideig tart."
+
+#: src/client/game.cpp
 msgid "MiB/s"
 msgstr "MiB/s"
 

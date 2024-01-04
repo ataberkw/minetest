@@ -1558,6 +1558,10 @@ msgid "Media..."
 msgstr "Vyombo vya habari..."
 
 #: src/client/game.cpp
+msgid "First time takes a while."
+msgstr "Mara ya kwanza inachukua muda."
+
+#: src/client/game.cpp
 msgid "MiB/s"
 msgstr "MiB/s"
 

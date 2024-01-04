@@ -1483,6 +1483,10 @@ msgid "Media..."
 msgstr "कला एवं आवाज़ें ..."
 
 #: src/client/game.cpp
+msgid "First time takes a while."
+msgstr "पहली बार थोड़ा समय लगेगा।"
+
+#: src/client/game.cpp
 msgid "MiB/s"
 msgstr "एम॰ आई॰ बी॰/ एस॰"
 

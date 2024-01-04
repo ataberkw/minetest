@@ -1474,6 +1474,10 @@ msgid "Media..."
 msgstr "Multimedia..."
 
 #: src/client/game.cpp
+msgid "First time takes a while."
+msgstr "La primera vez tarda un poco."
+
+#: src/client/game.cpp
 msgid "MiB/s"
 msgstr "MiB/s"
 

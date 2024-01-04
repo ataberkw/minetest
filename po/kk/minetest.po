@@ -1422,6 +1422,10 @@ msgid "Media..."
 msgstr ""
 
 #: src/client/game.cpp
+msgid "First time takes a while."
+msgstr "Бірінші рет қанағаттандыру үшін уақыт кетеді."
+
+#: src/client/game.cpp
 msgid "MiB/s"
 msgstr ""
 
