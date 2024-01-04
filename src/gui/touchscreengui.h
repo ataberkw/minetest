@@ -29,34 +29,43 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <unordered_map>
 #include <vector>
 
+#include "itemdef.h"
 #include "client/tile.h"
 #include "client/game.h"
+#include "util/pointedthing.h"
 
 using namespace irr;
 using namespace irr::core;
 using namespace irr::gui;
 
+enum class TapState {
+	None,
+	ShortTap,
+	LongTap,
+};
+
 typedef enum
 {
 	jump_id = 0,
-	crunch_id,
+	inventory_id,
+	chat_id,
+	exit_id,
+	minimap_id,
 	zoom_id,
+	camera_id,
+	drop_id,
+	crunch_id,
 	aux1_id,
 	after_last_element_id,
 	settings_starter_id,
+	top_buttons_id,
 	rare_controls_starter_id,
 	fly_id,
 	noclip_id,
 	fast_id,
 	debug_id,
-	camera_id,
 	range_id,
-	minimap_id,
 	toggle_chat_id,
-	chat_id,
-	inventory_id,
-	drop_id,
-	exit_id,
 	joystick_off_id,
 	joystick_bg_id,
 	joystick_center_id
@@ -74,6 +83,10 @@ typedef enum
 #define BUTTON_REPEAT_DELAY 0.2f
 #define SETTINGS_BAR_Y_OFFSET 5
 #define RARE_CONTROLS_BAR_Y_OFFSET 5
+
+// Our simulated clicks last some milliseconds so that server-side mods have a
+// chance to detect them via l_get_player_control.
+#define SIMULATED_CLICK_DURATION_MS 50
 
 extern const std::string button_image_names[];
 extern const std::string joystick_image_names[];
@@ -161,6 +174,7 @@ public:
 	~TouchScreenGUI();
 
 	void translateEvent(const SEvent &event);
+	void applyContextControls(const PointedThing &pointed, const TouchControlHint &hint);
 
 	void init(ISimpleTextureSource *tsrc);
 
@@ -226,8 +240,6 @@ private:
 	size_t m_move_id;
 	bool m_move_has_really_moved = false;
 	u64 m_move_downtime = 0;
-	bool m_move_sent_as_mouse_event = false;
-	v2s32 m_move_downlocation = v2s32(-10000, -10000); // off-screen
 
 	bool m_has_joystick_id = false;
 	size_t m_joystick_id;
@@ -252,6 +264,11 @@ private:
 
 	// check if a button has changed
 	void handleChangedButton(const SEvent &event);
+
+	// initialize a toggle butotn
+	void initToggleButton(touch_gui_button_id id, const rect<s32> &button_rect,
+		const std::wstring &caption, bool immediate_release,
+		float repeat_delay = BUTTON_REPEAT_DELAY);
 
 	// initialize a button
 	void initButton(touch_gui_button_id id, const rect<s32> &button_rect,
@@ -279,9 +296,6 @@ private:
 	// handle pressing hotbar items
 	bool isHotbarButton(const SEvent &event);
 
-	// do a right-click
-	bool doRightClick();
-
 	// handle release event
 	void handleReleaseEvent(size_t evt_id);
 
@@ -296,6 +310,16 @@ private:
 
 	// rare controls bar
 	AutoHideButtonBar m_rare_controls_bar;
+
+	v2s32 getPointerPos();
+	void emitMouseEvent(EMOUSE_INPUT_EVENT type);
+	TapState m_tap_state = TapState::None;
+
+	bool m_dig_pressed = false;
+	u64 m_dig_pressed_until = 0;
+
+	bool m_place_pressed = false;
+	u64 m_place_pressed_until = 0;
 };
 
 extern TouchScreenGUI *g_touchscreengui;
