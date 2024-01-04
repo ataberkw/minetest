@@ -110,4 +110,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     GUI related things
 */
 
-#define TTF_DEFAULT_FONT_SIZE (16)
+#define TTF_DEFAULT_FONT_SIZE (11)
