@@ -577,6 +577,11 @@ int ModApiMainMenu::l_create_world(lua_State *L)
 			g_settings->set(it.first, it2->second); // was set before
 	}
 
+    porting::logFirebaseAndroid("create_world", {
+        "name", name,
+        "gameid", gameid,
+        "success", lua_isnil(L, -1) ? "true" : "false"
+    });
 	return 1;
 }
 
@@ -594,6 +599,11 @@ int ModApiMainMenu::l_delete_world(lua_State *L)
 		lua_pushstring(L, "Failed to delete world");
 		return 1;
 	}
+
+    porting::logFirebaseAndroid("delete_world", {
+        "name", spec.name,
+        "success", "true"
+    });
 	return 0;
 }
 

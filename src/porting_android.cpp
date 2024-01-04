@@ -100,7 +100,7 @@ void initAndroid()
 		exit(-1);
 	}
 
-	nativeActivity = findClass("net/minetest/minetest/GameActivity");
+	nativeActivity = findClass("me/korata/finecraft/GameActivity");
 	if (nativeActivity == nullptr)
 		errorstream <<
 			"porting::initAndroid unable to find Java native activity class" <<
@@ -293,6 +293,33 @@ std::string getLanguageAndroid()
 			getLanguage);
 	return readJavaString((jstring) result);
 }
+
+void logFirebaseAndroid(const std::string &eventName, const std::vector<std::string> &params) {
+    jmethodID logFirebaseMethod = jnienv->GetMethodID(nativeActivity, "logFirebase",
+                                                      "(Ljava/lang/String;Ljava/util/List;)V");
+
+    if (logFirebaseMethod == nullptr) {
+        errorstream << "porting::logFirebaseAndroid unable to find Java logFirebase method" << std::endl;
+        return;
+    }
+
+    // Convert eventName to jstring
+    jstring jEventName = jnienv->NewStringUTF(eventName.c_str());
+
+    // Convert params vector to ArrayList
+    jclass arrayListClass = jnienv->FindClass("java/util/ArrayList");
+    jmethodID arrayListConstructor = jnienv->GetMethodID(arrayListClass, "<init>", "()V");
+    jobject jParamsList = jnienv->NewObject(arrayListClass, arrayListConstructor);
+
+    jmethodID arrayListAdd = jnienv->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    for (const std::string &param : params) {
+        jnienv->CallBooleanMethod(jParamsList, arrayListAdd, jnienv->NewStringUTF(param.c_str()));
+    }
+
+    // Call the Java method
+    jnienv->CallVoidMethod(app_global->activity->clazz, logFirebaseMethod, jEventName, jParamsList);
+}
+
 
 #endif // ndef SERVER
 }

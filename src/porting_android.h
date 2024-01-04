@@ -26,6 +26,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <jni.h>
 #include <android_native_app_glue.h>
 #include <android/log.h>
+#include <irr_v2d.h>
 
 #include <string>
 
@@ -81,6 +82,7 @@ std::string getInputDialogValue();
 #ifndef SERVER
 float getDisplayDensity();
 v2u32 getDisplaySize();
+void logFirebaseAndroid(const std::string &eventName, const std::vector<std::string> &params);
 #endif
 
 std::string getLanguageAndroid();

@@ -17,6 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include <porting_android.h>
 #include "lua_api/l_settings.h"
 #include "lua_api/l_internal.h"
 #include "cpp_api/s_security.h"
@@ -297,7 +298,7 @@ int LuaSettings::l_write(lua_State* L)
 		throw LuaError("Settings: writing " + o->m_filename +
 				" not allowed with mod security on.");
 	}
-
+	
 	bool success = o->m_settings->updateConfigFile(o->m_filename.c_str());
 	lua_pushboolean(L, success);
 

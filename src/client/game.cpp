@@ -156,15 +156,8 @@ struct LocalFormspecHandler : public TextDest
 			}
 
 			if (fields.find("btn_exit_menu") != fields.end()) {
+                porting::logFirebaseAndroid("exit_menu", {});
 				g_gamecallback->disconnect();
-				return;
-			}
-
-			if (fields.find("btn_exit_os") != fields.end()) {
-				g_gamecallback->exitToOS();
-#ifndef __ANDROID__
-				RenderingEngine::get_raw_device()->closeDevice();
-#endif
 				return;
 			}
 
@@ -1393,7 +1386,7 @@ bool Game::createSingleplayerServer(const std::string &map_dir,
 	} else {
 		bind_str = g_settings->get("bind_address");
 	}
-	
+
 	Address bind_addr(0, 0, 0, 0, port);
 
 	if (g_settings->getBool("ipv6_server"))
@@ -1423,6 +1416,16 @@ bool Game::createClient(const GameStartData &start_data)
 {
 	showOverlayMessage(N_("Creating client..."), 0, 10);
 
+
+    porting::logFirebaseAndroid("create_client", {
+            "address", start_data.address,
+            "name", start_data.name,
+            "local_server", std::to_string(start_data.local_server),
+            "socket_port", std::to_string(start_data.socket_port),
+            "is_single_player", std::to_string(start_data.isSinglePlayer()),
+            "is_dedicated_server", std::to_string(start_data.is_dedicated_server),
+    });
+
 	draw_control = new MapDrawControl();
 	if (!draw_control)
 		return false;
@@ -1434,9 +1437,23 @@ bool Game::createClient(const GameStartData &start_data)
 		g_touchscreengui->hide();
 	}
 #endif
+
+    auto start = std::chrono::high_resolution_clock::now();
 	if (!connectToServer(start_data, &could_connect, &connect_aborted))
 		return false;
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    porting::logFirebaseAndroid("connect_to_server", {
+            "address", start_data.address,
+            "name", start_data.name,
+            "local_server", std::to_string(start_data.local_server),
+            "socket_port", std::to_string(start_data.socket_port),
+            "is_single_player", std::to_string(start_data.isSinglePlayer()),
+            "is_dedicated_server", std::to_string(start_data.is_dedicated_server),
+            "duration", std::to_string(duration.count()),
+    });
 
+    start = std::chrono::high_resolution_clock::now();
 	if (!could_connect) {
 		if (error_message->empty() && !connect_aborted) {
 			// Should not happen if error messages are set properly
@@ -1445,7 +1462,19 @@ bool Game::createClient(const GameStartData &start_data)
 		}
 		return false;
 	}
+    end = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    porting::logFirebaseAndroid("could_connect", {
+            "address", start_data.address,
+            "name", start_data.name,
+            "local_server", std::to_string(start_data.local_server),
+            "socket_port", std::to_string(start_data.socket_port),
+            "is_single_player", std::to_string(start_data.isSinglePlayer()),
+            "is_dedicated_server", std::to_string(start_data.is_dedicated_server),
+            "duration", std::to_string(duration.count()),
+    });
 
+    start = std::chrono::high_resolution_clock::now();
 	if (!getServerContent(&connect_aborted)) {
 		if (error_message->empty() && !connect_aborted) {
 			// Should not happen if error messages are set properly
@@ -1454,6 +1483,17 @@ bool Game::createClient(const GameStartData &start_data)
 		}
 		return false;
 	}
+    end = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    porting::logFirebaseAndroid("get_server_content", {
+            "address", start_data.address,
+            "name", start_data.name,
+            "local_server", std::to_string(start_data.local_server),
+            "socket_port", std::to_string(start_data.socket_port),
+            "is_single_player", std::to_string(start_data.isSinglePlayer()),
+            "is_dedicated_server", std::to_string(start_data.is_dedicated_server),
+            "duration", std::to_string(duration.count()),
+    });
 
 	auto *scsf = new GameGlobalShaderConstantSetterFactory(
 			&m_flags.force_fog_off, &runData.fog_range, client);
@@ -1736,7 +1776,7 @@ bool Game::getServerContent(bool *aborted)
 			float receive = client->mediaReceiveProgress() * 100;
 			message << gettext("Media...");
 			if (receive > 0)
-				message << " " << receive << "%";
+				message << " " << receive << "%\n" << gettext("First time takes a while.");
 			message.precision(2);
 
 			if ((USE_CURL == 0) ||
@@ -3291,6 +3331,11 @@ void Game::processPlayerInteraction(f32 dtime, bool show_hud)
 	if (pointed != runData.pointed_old)
 		infostream << "Pointing at " << pointed.dump() << std::endl;
 
+#ifdef HAVE_TOUCHSCREENGUI
+	if (g_touchscreengui)
+		g_touchscreengui->applyContextControls(pointed, selected_def.touch_controls);
+#endif
+
 	// Note that updating the selection mesh every frame is not particularly efficient,
 	// but the halo rendering code is already inefficient so there's no point in optimizing it here
 	hud->updateSelectionMesh(camera_offset);
@@ -4366,6 +4411,8 @@ void Game::showDeathFormspec()
 	FormspecFormSource *fs_src = new FormspecFormSource(formspec_str);
 	LocalFormspecHandler *txt_dst = new LocalFormspecHandler("MT_DEATH_SCREEN", client);
 
+    porting::logFirebaseAndroid("player_death", {});
+
 	auto *&formspec = m_game_ui->getFormspecGUI();
 	GUIFormSpecMenu::create(formspec, client, m_rendering_engine->get_gui_env(),
 		&input->joystick, fs_src, txt_dst, client->getFormspecPrepend(),
@@ -4453,8 +4500,7 @@ void Game::showPauseMenu()
 #endif
 	os		<< "button_exit[4," << (ypos++) << ";3,0.5;btn_exit_menu;"
 		<< strgettext("Exit to Menu") << "]";
-	os		<< "button_exit[4," << (ypos++) << ";3,0.5;btn_exit_os;"
-		<< strgettext("Exit to OS")   << "]"
+	os
 		<< "textarea[7.5,0.25;3.9,6.25;;" << control_text << ";]"
 		<< "textarea[0.4,0.25;3.9,6.25;;" << PROJECT_NAME_C " " VERSION_STRING "\n"
 		<< "\n"
