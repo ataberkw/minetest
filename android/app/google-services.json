@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "944318473639",
+    "project_id": "finecraft-7b1f6",
+    "storage_bucket": "finecraft-7b1f6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:944318473639:android:25ef27ae4bf103622e0282",
+        "android_client_info": {
+          "package_name": "me.korata.finecraft"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGpyECFviWvb1wU-06NJM5KH73nI5mobE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
