@@ -174,7 +174,7 @@ fixed_virtual_joystick (Fixed virtual joystick) bool false
 #    If enabled, virtual joystick will also tap "Aux1" button when out of main circle.
 #
 #    Requires: touchscreen_gui
-virtual_joystick_triggers_aux1 (Virtual joystick triggers Aux1 button) bool false
+virtual_joystick_triggers_aux1 (Virtual joystick triggers Aux1 button) bool true
 
 
 [Graphics and Audio]

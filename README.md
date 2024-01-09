@@ -1,4 +1,4 @@
-Minetest
+Finecraft (Minetest)
 ========
 
 ![Build Status](https://github.com/minetest/minetest/workflows/build/badge.svg)
