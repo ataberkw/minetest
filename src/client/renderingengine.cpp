@@ -221,7 +221,7 @@ void RenderingEngine::draw_load_screen(const std::wstring &text,
 {
 	v2u32 screensize = getWindowSize();
 
-	v2s32 textsize(g_fontengine->getTextWidth(text), g_fontengine->getLineHeight());
+	v2s32 textsize(g_fontengine->getTextWidth(text), g_fontengine->getLineHeight()*2);
 	v2s32 center(screensize.X / 2, screensize.Y / 2);
 	core::rect<s32> textrect(center - textsize / 2, center + textsize / 2);
 
@@ -376,4 +376,16 @@ void RenderingEngine::autosaveScreensizeAndCo(
 			->isWindowMaximized();
 	if (is_window_maximized != initial_window_maximized)
 		g_settings->setBool("window_maximized", is_window_maximized);
+}
+
+bool RenderingEngine::isHighDpi()
+{
+#if defined(__MACH__) && defined(__APPLE__) && !defined(__IOS__)
+	return g_settings->getFloat("screen_dpi") / 72.0f >= 2;
+#elif defined(__IOS__)
+	float density = RenderingEngine::getDisplayDensity();
+	return isTablet() ? (density >= 2) : (density >= 3);
+#else
+	return RenderingEngine::getDisplayDensity() >= 3;
+#endif
 }

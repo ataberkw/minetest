@@ -641,6 +641,11 @@ void GUIFormSpecMenu::parseScrollBar(parserData* data, const std::string &elemen
 	std::string name = parts[3];
 	std::string value = parts[4];
 
+	std::vector<std::string> textures;
+
+	if (parts.size() == 6)
+		textures = split(parts[5], ',');
+
 	MY_CHECKPOS("scrollbar",0);
 	MY_CHECKGEOM("scrollbar",1);
 
@@ -674,7 +679,7 @@ void GUIFormSpecMenu::parseScrollBar(parserData* data, const std::string &elemen
 	spec.ftype = f_ScrollBar;
 	spec.send  = true;
 	GUIScrollBar *e = new GUIScrollBar(Environment, data->current_parent,
-			spec.fid, rect, is_horizontal, true, m_tsrc);
+			spec.fid, rect, is_horizontal, true);
 
 	auto style = getDefaultStyleForElement("scrollbar", name);
 	e->setNotClipped(style.getBool(StyleSpec::NOCLIP, false));
@@ -694,6 +699,18 @@ void GUIFormSpecMenu::parseScrollBar(parserData* data, const std::string &elemen
 	s32 scrollbar_size = is_horizontal ? dim.X : dim.Y;
 
 	e->setPageSize(scrollbar_size * (max - min + 1) / data->scrollbar_options.thumb_size);
+
+	std::vector<video::ITexture *> itextures;
+
+	if (textures.empty()) {
+		// Fall back to the scrollbar textures specified in style[]
+		e->setStyle(style, m_tsrc);
+	} else {
+		for (u32 i = 0; i < textures.size(); ++i)
+			itextures.push_back(m_tsrc->getTexture(textures[i]));
+
+		e->setTextures(itextures);
+	}
 
 	if (spec.fname == m_focused_element) {
 		Environment->setFocus(e);

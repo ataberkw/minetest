@@ -12,9 +12,10 @@ the arrow buttons where there is insufficient space.
 
 #pragma once
 
+#include "guiAnimatedImage.h"
 #include "irrlichttypes_extrabloated.h"
-
-class ISimpleTextureSource;
+#include "StyleSpec.h"
+#include <vector>
 
 using namespace irr;
 using namespace gui;
@@ -23,8 +24,7 @@ class GUIScrollBar : public IGUIElement
 {
 public:
 	GUIScrollBar(IGUIEnvironment *environment, IGUIElement *parent, s32 id,
-			core::rect<s32> rectangle, bool horizontal, bool auto_scale,
-			ISimpleTextureSource *tsrc);
+			core::rect<s32> rectangle, bool horizontal, bool auto_scale);
 
 	enum ArrowVisibility
 	{
@@ -42,6 +42,7 @@ public:
 	s32 getLargeStep() const { return large_step; }
 	s32 getSmallStep() const { return small_step; }
 	s32 getPos() const;
+	s32 getPageSize() const { return page_size; }
 
 	void setMax(const s32 &max);
 	void setMin(const s32 &min);
@@ -50,14 +51,21 @@ public:
 	void setPos(const s32 &pos);
 	void setPageSize(const s32 &size);
 	void setArrowsVisible(ArrowVisibility visible);
+	void setTextures(const std::vector<video::ITexture *> &textures);
+	void setStyle(const StyleSpec &style, ISimpleTextureSource *tsrc);
 
 private:
 	void refreshControls();
 	s32 getPosFromMousePos(const core::position2di &p) const;
 	f32 range() const { return f32(max_pos - min_pos); }
+	gui::IGUIImage *addImage(const core::rect<s32> &rect, video::ITexture *texture);
 
 	IGUIButton *up_button;
 	IGUIButton *down_button;
+	gui::IGUIImage *bg_image;
+	gui::IGUIImage *slider_image;
+	gui::IGUIImage *slider_top_image;
+	gui::IGUIImage *slider_bottom_image;
 	ArrowVisibility arrow_visibility = DEFAULT;
 	bool is_dragging;
 	bool is_horizontal;
@@ -75,8 +83,9 @@ private:
 	s32 page_size;
 	s32 border_size;
 
+	std::vector<video::ITexture *> m_textures;
+	core::rect<s32> m_texture_middle;
+
 	core::rect<s32> slider_rect;
 	video::SColor current_icon_color;
-
-	ISimpleTextureSource *m_tsrc;
 };

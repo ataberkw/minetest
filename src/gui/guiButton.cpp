@@ -666,9 +666,6 @@ void GUIButton::setFromState()
 	if (isHovered())
 		state = static_cast<StyleSpec::State>(state | StyleSpec::STATE_HOVERED);
 
-	if (isFocused())
-		state = static_cast<StyleSpec::State>(state | StyleSpec::STATE_FOCUSED);
-
 	setFromStyle(StyleSpec::getStyleFromStatePropagation(Styles, state));
 }
 
