@@ -49,6 +49,23 @@ enum ItemType
 	ITEM_TOOL,
 };
 
+enum class TouchControlMode
+{
+	LongDigShortPlace,
+	ShortDigLongPlace,
+};
+
+struct TouchControlHint
+{
+	TouchControlMode pointed_nothing;
+	TouchControlMode pointed_node;
+	TouchControlMode pointed_object;
+
+	TouchControlHint();
+	void serialize(std::ostream &os) const;
+	void deSerialize(std::istream &is);
+};
+
 struct ItemDefinition
 {
 	/*
@@ -90,6 +107,8 @@ struct ItemDefinition
 	std::string node_placement_prediction;
 	std::optional<u8> place_param2;
 
+	TouchControlHint touch_controls;
+	
 	/*
 		Some helpful methods
 	*/

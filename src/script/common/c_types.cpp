@@ -32,3 +32,10 @@ struct EnumString es_ItemType[] =
 		{ITEM_TOOL, "tool"},
 		{0, NULL},
 	};
+
+struct EnumString es_TouchControlMode[] =
+	{
+		{(int)TouchControlMode::LongDigShortPlace, "long_dig_short_place"},
+		{(int)TouchControlMode::ShortDigLongPlace, "short_dig_long_place"},
+		{0, NULL},
+	};

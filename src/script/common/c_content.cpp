@@ -136,6 +136,20 @@ void read_item_definition(lua_State* L, int index,
 	int place_param2;
 	if (getintfield(L, index, "place_param2", place_param2))
 		def.place_param2 = rangelim(place_param2, 0, U8_MAX);
+
+	lua_getfield(L, index, "touch_controls");
+	if (!lua_isnil(L, -1)) {
+		luaL_checktype(L, -1, LUA_TTABLE);
+
+		TouchControlHint &hint = def.touch_controls;
+		hint.pointed_nothing = (TouchControlMode)getenumfield(L, -1, "pointed_nothing",
+				es_TouchControlMode, (int)hint.pointed_nothing);
+		hint.pointed_node = (TouchControlMode)getenumfield(L, -1, "pointed_node",
+				es_TouchControlMode, (int)hint.pointed_node);
+		hint.pointed_object = (TouchControlMode)getenumfield(L, -1, "pointed_object",
+				es_TouchControlMode, (int)hint.pointed_object);
+	}
+	lua_pop(L, 1);
 }
 
 /******************************************************************************/
@@ -195,6 +209,16 @@ void push_item_definition_full(lua_State *L, const ItemDefinition &i)
 	lua_setfield(L, -2, "sound_place_failed");
 	lua_pushstring(L, i.node_placement_prediction.c_str());
 	lua_setfield(L, -2, "node_placement_prediction");
+
+	lua_createtable(L, 0, 3);
+	const TouchControlHint &hint = i.touch_controls;
+	lua_pushstring(L, es_TouchControlMode[(int)hint.pointed_nothing].str);
+	lua_setfield(L, -2,"pointed_nothing");
+	lua_pushstring(L, es_TouchControlMode[(int)hint.pointed_node].str);
+	lua_setfield(L, -2,"pointed_node");
+	lua_pushstring(L, es_TouchControlMode[(int)hint.pointed_object].str);
+	lua_setfield(L, -2,"pointed_object");
+	lua_setfield(L, -2, "touch_controls");
 }
 
 /******************************************************************************/

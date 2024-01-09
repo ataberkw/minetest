@@ -38,6 +38,25 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <map>
 #include <set>
 
+TouchControlHint::TouchControlHint() {
+	pointed_nothing = TouchControlMode::LongDigShortPlace;
+	pointed_node    = TouchControlMode::LongDigShortPlace;
+	// Map punching to single tap by default.
+	pointed_object  = TouchControlMode::ShortDigLongPlace;
+}
+
+void TouchControlHint::serialize(std::ostream &os) const {
+	writeU8(os, (u8)pointed_nothing);
+	writeU8(os, (u8)pointed_node);
+	writeU8(os, (u8)pointed_object);
+}
+
+void TouchControlHint::deSerialize(std::istream &is) {
+	pointed_nothing = (TouchControlMode)readU8(is);
+	pointed_node = (TouchControlMode)readU8(is);
+	pointed_object = (TouchControlMode)readU8(is);
+}
+
 /*
 	ItemDefinition
 */
@@ -83,6 +102,7 @@ ItemDefinition& ItemDefinition::operator=(const ItemDefinition &def)
 	range = def.range;
 	palette_image = def.palette_image;
 	color = def.color;
+	touch_controls = def.touch_controls;
 	return *this;
 }
 
@@ -124,6 +144,7 @@ void ItemDefinition::reset()
 	range = -1;
 	node_placement_prediction.clear();
 	place_param2.reset();
+	touch_controls = TouchControlHint();
 }
 
 void ItemDefinition::serialize(std::ostream &os, u16 protocol_version) const
@@ -183,6 +204,8 @@ void ItemDefinition::serialize(std::ostream &os, u16 protocol_version) const
 	os << (u8)place_param2.has_value(); // protocol_version >= 43
 	if (place_param2)
 		os << *place_param2;
+
+	touch_controls.serialize(os);
 }
 
 void ItemDefinition::deSerialize(std::istream &is, u16 protocol_version)
@@ -251,6 +274,10 @@ void ItemDefinition::deSerialize(std::istream &is, u16 protocol_version)
 
 		if (readU8(is)) // protocol_version >= 43
 			place_param2 = readU8(is);
+		if (is.eof())
+			throw SerializationError("");
+
+		touch_controls.deSerialize(is);
 	} catch(SerializationError &e) {};
 }
 
