@@ -27,6 +27,7 @@ local full_settings = settingtypes.parse_config_file(false, true)
 local info_icon_path = core.formspec_escape(defaulttexturedir .. "settings_info.png")
 local reset_icon_path = core.formspec_escape(defaulttexturedir .. "settings_reset.png")
 
+local gettext = fgettext_ne
 local all_pages = {}
 local page_by_id = {}
 local filtered_pages = all_pages
@@ -65,23 +66,23 @@ local change_keys = {
 
 add_page({
 	id = "accessibility",
-	title = fgettext_ne("Accessibility"),
+	title = gettext("Accessibility"),
 	content = {
 		"language",
-		{ heading = fgettext_ne("General") },
+		{ heading = gettext("General") },
 		"font_size",
 		"chat_font_size",
 		"gui_scaling",
 		"hud_scaling",
 		"show_nametag_backgrounds",
-		{ heading = fgettext_ne("Chat") },
+		{ heading = gettext("Chat") },
 		"console_height",
 		"console_alpha",
 		"console_color",
-		{ heading = fgettext_ne("Controls") },
+		{ heading = gettext("Controls") },
 		"autojump",
 		"safe_dig_and_place",
-		{ heading = fgettext_ne("Movement") },
+		{ heading = gettext("Movement") },
 		"arm_inertia",
 		"view_bobbing_amount",
 		"fall_bobbing_amount",
@@ -96,7 +97,7 @@ local function load_settingtypes()
 		if not page then
 			page = add_page({
 				id = (section or "general"):lower():gsub(" ", "_"),
-				title = section or fgettext_ne("General"),
+				title = section or gettext("General"),
 				section = section,
 				content = {},
 			})
@@ -116,11 +117,13 @@ local function load_settingtypes()
 					content = {},
 				}
 
-				page = add_page(page)
+				if page.title:sub(1, 5) ~= "Hide:" then
+					page = add_page(page)
+				end
 			elseif entry.level == 2 then
 				ensure_page_started()
 				page.content[#page.content + 1] = {
-					heading = fgettext_ne(entry.readable_name or entry.name),
+					heading = gettext(entry.readable_name or entry.name),
 				}
 			end
 		else
@@ -468,28 +471,30 @@ local function get_formspec(dialogdata)
 	local fs = {
 		"formspec_version[6]",
 		"size[", tostring(tabsize.width), ",", tostring(tabsize.height + extra_h), "]",
-		TOUCHSCREEN_GUI and "padding[0.01,0.01]" or "",
-		"bgcolor[#0000]",
+		TOUCHSCREEN_GUI and "padding[0.01,0.1]" or "",
+		background(-1, -.75, tabsize.width + 2, tabsize.height + extra_h + 1.5),
+		"bgcolor[;neither;]",
 
 		-- HACK: this is needed to allow resubmitting the same formspec
 		formspec_show_hack and " " or "",
 
-		"box[0,0;", tostring(tabsize.width), ",", tostring(tabsize.height), ";#0000008C]",
+		"box[0,0;", tostring(tabsize.width), ",", tostring(tabsize.height), ";#00000000]",
 
-		("button[0,%f;%f,0.8;back;%s]"):format(
+		primary_btn_style("back"),
+		("button[0,%f;%f,1.2;back;%s]"):format(
 				tabsize.height + 0.2, back_w, fgettext("Back")),
 
-		("box[%f,%f;%f,0.8;#0000008C]"):format(
+		("box[%f,%f;%f,0.8;#00000000]"):format(
 			back_w + 0.2, tabsize.height + 0.2, checkbox_w),
-		("checkbox[%f,%f;show_technical_names;%s;%s]"):format(
+		--[[ ("checkbox[%f,%f;show_technical_names;%s;%s]"):format(
 			back_w + 2*0.2, tabsize.height + 0.6,
-			fgettext("Show technical names"), tostring(show_technical_names)),
+			fgettext("Show technical names"), tostring(show_technical_names)), ]]
 
-		("box[%f,%f;%f,0.8;#0000008C]"):format(
+		("box[%f,%f;%f,0.8;#00000000]"):format(
 			back_w + 2*0.2 + checkbox_w, tabsize.height + 0.2, checkbox_w),
-		("checkbox[%f,%f;show_advanced;%s;%s]"):format(
+		--[[ ("checkbox[%f,%f;show_advanced;%s;%s]"):format(
 			back_w + 3*0.2 + checkbox_w, tabsize.height + 0.6,
-			fgettext("Show advanced settings"), tostring(show_advanced)),
+			fgettext("Show advanced settings"), tostring(show_advanced)), ]]
 
 		"field[0.25,0.25;", tostring(search_width), ",0.75;search_query;;",
 			core.formspec_escape(dialogdata.query or ""), "]",
@@ -532,6 +537,7 @@ local function get_formspec(dialogdata)
 
 	if y >= tabsize.height - 1.25 then
 		fs[#fs + 1] = make_scrollbaroptions_for_scroll_container(tabsize.height - 1.5, y, 0.1)
+		fs[#fs + 1] = scrollbar_style("leftscroll")
 		fs[#fs + 1] = ("scrollbar[%f,1.25;%f,%f;vertical;leftscroll;%f]"):format(
 				left_pane_width + 0.25, scrollbar_w, tabsize.height - 1.5, dialogdata.leftscroll or 0)
 	end
@@ -600,6 +606,7 @@ local function get_formspec(dialogdata)
 
 	if y >= tabsize.height then
 		fs[#fs + 1] = make_scrollbaroptions_for_scroll_container(tabsize.height, y + 0.375, 0.1)
+		fs[#fs + 1] = scrollbar_style("rightscroll")
 		fs[#fs + 1] = ("scrollbar[%f,0;%f,%f;vertical;rightscroll;%f]"):format(
 				tabsize.width - scrollbar_w, scrollbar_w, tabsize.height, dialogdata.rightscroll or 0)
 	end
@@ -692,7 +699,7 @@ end
 local function eventhandler(event)
 	if event == "DialogShow" then
 		-- Don't show the "MINETEST" header behind the dialog.
-		mm_game_theme.set_engine(true)
+
 		return true
 	end
 

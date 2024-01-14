@@ -44,6 +44,7 @@ local dialog_metatable = {
 			self.eventhandler(self, "DialogHide")
 		end
 	end,
+	is_hidden = function(self) return self.hidden end,
 	show = function(self)
 		if self.hidden then
 			self.hidden = false
@@ -91,6 +92,40 @@ function messagebox(name, message)
 			function(this, fields)
 				if fields.ok then
 					this:delete()
+					return true
+				end
+			end,
+			nil)
+end
+
+
+function confirmbox(name, message, on_confirm, on_cancel)
+	return dialog_create(name,
+			function()
+				return ([[
+					formspec_version[6]
+					size[12,4]
+					%s
+					textarea[1.5,0.75;9,1.5;;;%s]
+					%s
+					button[1.5,2.3;2,0.9;cancel;%s]
+					%s
+					button[8.675,2.3;2,.9;ok;%s]
+				 ]]):format(background(0,0,12,4),message, primary_btn_style("cancel", "red"), fgettext("Cancel"), primary_btn_style("ok"), fgettext("ok"))
+			end,
+			function(this, fields)
+				if fields.ok then
+					this:delete()
+					if on_confirm then
+						on_confirm()
+					end
+					return true
+				end
+				if fields.cancel then
+					this:delete()
+					if on_cancel then
+						on_cancel()
+					end
 					return true
 				end
 			end,

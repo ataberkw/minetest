@@ -76,7 +76,8 @@ local function get_formspec(self)
 		end
 	end
 
-	local end_button_size = 0.75
+	local end_button_size = 1.35
+	local end_button_icon_size = .5
 
 	local tab_header_size = { width = tsize.width, height = 0.85 }
 	if self.end_button then
@@ -86,17 +87,14 @@ local function get_formspec(self)
 	local formspec = (prepend or "") .. self:tab_header(tab_header_size) .. content
 
 	if self.end_button then
-		formspec = formspec ..
-				("style[%s;noclip=true;border=false]"):format(self.end_button.name) ..
-				("tooltip[%s;%s]"):format(self.end_button.name, self.end_button.label) ..
-				("image_button[%f,%f;%f,%f;%s;%s;]"):format(
-						self.width - end_button_size,
-						(-tab_header_size.height - end_button_size) / 2,
-						end_button_size,
-						end_button_size,
-						core.formspec_escape(self.end_button.icon),
-						self.end_button.name)
-	end
+        formspec = formspec .. ("style[%s;noclip=true;border=false]"):format(self.end_button.name) ..
+                       ("tooltip[%s;%s]"):format(self.end_button.name, self.end_button.label) ..
+                       btn_style("header_bg", self.end_button.name, nil, 8) ..
+                       ("button[%f,%f;%f,%f;%s;]"):format(self.width - end_button_size, .1, end_button_size,
+                end_button_size, self.end_button.name) ..
+                       ("image[%f,%f;%f,%f;%s]"):format(self.width - end_button_size + (end_button_size - end_button_icon_size) / 2, .15 + (end_button_size - end_button_icon_size) / 2,
+                end_button_icon_size, end_button_icon_size, self.end_button.icon)
+    end
 
 	return formspec
 end
@@ -152,22 +150,23 @@ end
 
 --------------------------------------------------------------------------------
 local function tab_header(self, size)
-	local toadd = ""
+    local toadd = ""
 
-	for i = 1, #self.tablist do
-		if toadd ~= "" then
-			toadd = toadd .. ","
-		end
+    local fixed_tab_width = size.width / #self.tablist
+    for i = 1, #self.tablist do
+        local is_current_tab = self.tablist[i].name == self.current_tab
+        local caption = self.tablist[i].caption
+        local name = self.tablist[i].name
+        local tab_width = fixed_tab_width + (i - 1) * .25
+        local tab_x = (fixed_tab_width * (i - 1) - (i - 1) * .25)
+        local tab = btn_style("header_bg" .. (is_current_tab and '_pressed' or ''), "tab_btn_" .. i, nil, 12)
 
-		local caption = self.tablist[i].caption
-		if type(caption) == "function" then
-			caption = caption(self)
-		end
-
-		toadd = toadd .. caption
-	end
-	return string.format("tabheader[%f,%f;%f,%f;%s;%s;%i;true;false]",
-			self.header_x, self.header_y, size.width, size.height, self.name, toadd, self.last_tab_index)
+        tab = tab .. "image_button[" .. tab_x + .035 .. ",-.0;" .. tab_width .. ",1.3;;tab_btn_" .. dump(i) .. ";;true;false;]"
+        tab = tab .. "label[" .. tab_x + 1.5 .. ",.8;" .. minetest.colorize(PRIMARY_TEXT_COLOR, caption) .. "]"
+        tab = tab .. "image[" .. tab_x + .5 .. ",.45;.7,.7;" .. defaulttexturedir .. "grass_block.png]"
+        toadd = toadd .. tab
+    end
+    return toadd
 end
 
 --------------------------------------------------------------------------------
@@ -197,13 +196,20 @@ end
 --------------------------------------------------------------------------------
 local function handle_tab_buttons(self,fields)
 	--save tab selection to config file
-	if fields[self.name] then
-		local index = tonumber(fields[self.name])
-		switch_to_tab(self, index)
-		return true
-	end
-
+	for i = 1, #self.tablist do
+        if fields["tab_btn_" .. i] then
+            switch_to_tab(self, i)
+            return true
+        end
+    end
 	return false
+end
+
+--------------------------------------------------------------------------------
+local function hide_tab_header(self)
+    self.tab_header = function()
+        return ""
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -261,6 +267,7 @@ local tabview_metatable = {
 	set_end_button =
 			function(self, v) self.end_button = v end,
 	tab_header = tab_header,
+    hide_tab_header = hide_tab_header,
 	handle_tab_buttons = handle_tab_buttons
 }
 
