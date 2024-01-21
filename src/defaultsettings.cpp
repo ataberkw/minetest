@@ -292,7 +292,7 @@ void set_default_settings()
 	settings->setDefault("safe_dig_and_place", "false");
 	settings->setDefault("random_input", "false");
 	settings->setDefault("aux1_descends", "false");
-	settings->setDefault("doubletap_jump", "false");
+	settings->setDefault("doubletap_jump", "true");
 	settings->setDefault("always_fly_fast", "true");
 #ifdef HAVE_TOUCHSCREENGUI
 	settings->setDefault("autojump", "true");
@@ -473,7 +473,7 @@ void set_default_settings()
 
 #ifdef HAVE_TOUCHSCREENGUI
 	settings->setDefault("touchscreen_threshold", "20");
-	settings->setDefault("touchscreen_sensitivity", "0.2");
+	settings->setDefault("touchscreen_sensitivity", "0.1");
 	settings->setDefault("touch_use_crosshair", "true");
 	settings->setDefault("fixed_virtual_joystick", "false");
 	settings->setDefault("virtual_joystick_triggers_aux1", "true");

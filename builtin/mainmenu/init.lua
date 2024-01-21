@@ -81,6 +81,7 @@ local function toggle_tabs()
     local init_dialog = ui.find_by_name("init_dialog")
     if tv_main.hidden then
         tv_main:show()
+        tv_main:set_tab("play")
         init_dialog:hide()
     else
         ui.set_default("maintab")
