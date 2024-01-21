@@ -71,7 +71,7 @@ public class GameActivity extends NativeActivity {
 	private InterstitialAd mInterstitialAd;
 	final Handler handler = new Handler();
 	final int delay = 1000; // in ms
-	final int firstAdDelay = 1000 * 60 * 3; // in ms
+	final int firstAdDelay = 1000 * 60 * 30; // in ms
 	boolean isFirstAdTick = true;
 
 	private boolean isAdAboutToShow = false;

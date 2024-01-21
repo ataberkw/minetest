@@ -9,7 +9,7 @@ import java.io.File;
 import java.util.Objects;
 
 public class Utils {
-	static int adShowInterval = 60 * 10; //in seconds
+	static int adShowInterval = 60 * 30; //in seconds
 	@NonNull
 	public static File createDirs(@NonNull File root, @NonNull String dir) {
 		File f = new File(root, dir);
