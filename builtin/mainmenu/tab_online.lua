@@ -15,6 +15,8 @@
 --with this program; if not, write to the Free Software Foundation, Inc.,
 --51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+local show_consent = true
+
 local function get_sorted_servers()
 	local servers = {
 		fav = {},
@@ -102,6 +104,24 @@ local function get_formspec(tabview, name, tabdata)
 	-- Update the cached supported proto info,
 	-- it may have changed after a change by the settings menu.
 	common_update_cached_supp_proto()
+	
+	if show_consent then
+		-- Show custom dialog.lua
+		local edit_world_dlg = confirmbox("warning",
+			fgettext(
+    			"If you are a minor, please play Finecraft online under the supervision of an adult."), 
+		function()
+			show_consent = false
+		end,
+		function()
+			show_consent = true
+			tabview:set_tab("play")
+		end)
+
+		edit_world_dlg:set_parent(tabview)
+		tabview:hide()
+		edit_world_dlg:show()
+	 end
 
 	if not tabdata.search_for then
 		tabdata.search_for = ""
