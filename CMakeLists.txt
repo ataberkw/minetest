@@ -290,8 +290,8 @@ install(FILES "minetest.conf.example" DESTINATION "${EXAMPLE_CONF_DIR}")
 
 if(UNIX AND NOT APPLE)
 	install(FILES "doc/minetest.6" "doc/minetestserver.6" DESTINATION "${MANDIR}/man6")
-	install(FILES "misc/me.korata.finecraft.desktop" DESTINATION "${XDG_APPS_DIR}")
-	install(FILES "misc/me.korata.finecraft.appdata.xml" DESTINATION "${APPDATADIR}")
+	install(FILES "misc/com.mcpeturk.dilsecici.desktop" DESTINATION "${XDG_APPS_DIR}")
+	install(FILES "misc/com.mcpeturk.dilsecici.appdata.xml" DESTINATION "${APPDATADIR}")
 	install(FILES "misc/minetest.svg" DESTINATION "${ICONDIR}/hicolor/scalable/apps")
 	install(FILES "misc/minetest-xorg-icon-128.png"
 		DESTINATION "${ICONDIR}/hicolor/128x128/apps"

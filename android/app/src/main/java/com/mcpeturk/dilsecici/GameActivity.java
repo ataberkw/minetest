@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-package me.korata.finecraft;
+package com.mcpeturk.dilsecici;
 
 import static android.content.ContentValues.TAG;
 
@@ -71,7 +71,7 @@ public class GameActivity extends NativeActivity {
 	private InterstitialAd mInterstitialAd;
 	final Handler handler = new Handler();
 	final int delay = 1000; // in ms
-	final int firstAdDelay = 1000 * 60 * 30; // in ms
+	final int firstAdDelay = 1000 * 60 * 6; // in ms
 	boolean isFirstAdTick = true;
 
 	private boolean isAdAboutToShow = false;
@@ -187,7 +187,7 @@ public class GameActivity extends NativeActivity {
 	protected void loadAd(){
 		AdRequest adRequest = new AdRequest.Builder().build();
 
-		InterstitialAd.load(this,"ca-app-pub-2406666254945812/3758118895", adRequest,
+		InterstitialAd.load(this,"ca-app-pub-2406666254945812/1834748191", adRequest,
 			new InterstitialAdLoadCallback() {
 				@Override
 				public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
@@ -338,7 +338,7 @@ public class GameActivity extends NativeActivity {
 			return;
 		}
 
-		Uri fileUri = FileProvider.getUriForFile(this, "me.korata.finecraft.fileprovider", file);
+		Uri fileUri = FileProvider.getUriForFile(this, "com.mcpeturk.dilsecici.fileprovider", file);
 
 		Intent intent = new Intent(Intent.ACTION_SEND, fileUri);
 		intent.setDataAndType(fileUri, getContentResolver().getType(fileUri));

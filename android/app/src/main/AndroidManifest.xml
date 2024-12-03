@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	package="me.korata.finecraft"
+	package="com.mcpeturk.dilsecici"
 	android:installLocation="auto">
 
    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
@@ -18,14 +18,14 @@
 
 		<meta-data
 			android:name="com.google.android.gms.ads.APPLICATION_ID"
-			android:value="ca-app-pub-2406666254945812~5662760336"/>
+			android:value="ca-app-pub-2406666254945812~4493830282"/>
 
 		<meta-data
 			android:name="android.max_aspect"
 			android:value="3.0" />
 
 		<activity
-			android:name="me.korata.finecraft.MainActivity"
+			android:name="com.mcpeturk.dilsecici.MainActivity"
 			android:configChanges="orientation|keyboardHidden|navigation|screenSize"
 			android:maxAspectRatio="3.0"
 			android:screenOrientation="sensorLandscape"
@@ -38,7 +38,7 @@
 		</activity>
 
 		<activity
-			android:name="me.korata.finecraft.GameActivity"
+			android:name="com.mcpeturk.dilsecici.GameActivity"
 			android:configChanges="orientation|keyboard|keyboardHidden|navigation|screenSize|smallestScreenSize"
 			android:hardwareAccelerated="true"
 			android:launchMode="singleTask"
@@ -55,13 +55,13 @@
 		</activity>
 
 		<service
-			android:name="me.korata.finecraft.UnzipService"
+			android:name="com.mcpeturk.dilsecici.UnzipService"
 			android:enabled="true"
 			android:exported="false" />
 
 		<provider
 			android:name="androidx.core.content.FileProvider"
-			android:authorities="me.korata.finecraft.fileprovider"
+			android:authorities="com.mcpeturk.dilsecici.fileprovider"
 			android:grantUriPermissions="true"
 			android:exported="false">
 			<meta-data

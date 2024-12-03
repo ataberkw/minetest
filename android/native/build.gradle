@@ -49,7 +49,7 @@ task downloadDeps(type: Download) {
 	def depsDir = new File(buildDir.parent, 'deps')
 	def depsZip = new File(buildDir, 'deps.zip')
 
-	src 'https://github.com/minetest/minetest_android_deps/releases/download/latest/deps.zip'
+	src 'https://github.com/minetest/minetest_android_deps/archive/refs/tags/5.8.0.zip'
 	dest depsZip
 	overwrite false
 

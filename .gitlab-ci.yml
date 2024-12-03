@@ -120,7 +120,7 @@ package:appimage-client:
     - cp -a artifact/minetest/usr/ AppDir/usr/
     - cp -a clientmods AppDir/usr/share/minetest
     # Remove PrefersNonDefaultGPU property due to validation errors
-    - sed -i '/PrefersNonDefaultGPU/d' AppDir/usr/share/applications/me.korata.finecraft.desktop
+    - sed -i '/PrefersNonDefaultGPU/d' AppDir/usr/share/applications/com.mcpeturk.dilsecici.desktop
   script:
     - export VERSION=$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA
     - appimage-builder --skip-test --recipe misc/AppImageBuilder.yml

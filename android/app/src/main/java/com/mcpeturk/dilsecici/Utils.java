@@ -1,4 +1,4 @@
-package me.korata.finecraft;
+package com.mcpeturk.dilsecici;
 
 import android.content.Context;
 import android.content.SharedPreferences;

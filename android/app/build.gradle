@@ -7,7 +7,7 @@ android {
 	buildToolsVersion '34.0.0'
 	ndkVersion "$ndk_version"
 	defaultConfig {
-		applicationId 'me.korata.finecraft'
+		applicationId 'com.mcpeturk.dilsecici'
 		minSdkVersion 21
 		targetSdkVersion 34
 		versionName "${versionMajor}.${versionMinor}.${versionPatch}"

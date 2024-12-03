@@ -142,10 +142,10 @@ perform_release() {
 	local release_version=$1
 	RELEASE_DATE=$(date +%Y-%m-%d)
 
-	sed -i '/\<release/s/\(version\)="[^"]*"/\1="'"$release_version"'"/' misc/me.korata.finecraft.appdata.xml
-	sed -i 's/\(<release date\)="[^"]*"/\1="'"$RELEASE_DATE"'"/' misc/me.korata.finecraft.appdata.xml
+	sed -i '/\<release/s/\(version\)="[^"]*"/\1="'"$release_version"'"/' misc/com.mcpeturk.dilsecici.appdata.xml
+	sed -i 's/\(<release date\)="[^"]*"/\1="'"$RELEASE_DATE"'"/' misc/com.mcpeturk.dilsecici.appdata.xml
 
-	git add -f misc/me.korata.finecraft.appdata.xml
+	git add -f misc/com.mcpeturk.dilsecici.appdata.xml
 
 	git commit -m "Bump version to $release_version"
 

@@ -4,10 +4,10 @@
 WATCHED_DIR="/Users/ataberkw/dev/CPPProjects/minetest2"
 
 # The Android directory to push to
-ANDROID_DIR="/storage/emulated/0/Android/data/me.korata.finecraft/files/Minetest"
+ANDROID_DIR="/storage/emulated/0/Android/data/com.mcpeturk.dilsecici/files/Minetest"
 
 # The package name of the Android app
-PACKAGE_NAME="me.korata.finecraft"
+PACKAGE_NAME="com.mcpeturk.dilsecici"
 
 # Folders to include
 INCLUDE_DIRS=(

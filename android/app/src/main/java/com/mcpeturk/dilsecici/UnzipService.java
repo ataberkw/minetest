@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-package me.korata.finecraft;
+package com.mcpeturk.dilsecici;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -47,10 +47,10 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 public class UnzipService extends IntentService {
-	public static final String ACTION_UPDATE = "me.korata.finecraft.UPDATE";
-	public static final String ACTION_PROGRESS = "me.korata.finecraft.PROGRESS";
-	public static final String ACTION_PROGRESS_MESSAGE = "me.korata.finecraft.PROGRESS_MESSAGE";
-	public static final String ACTION_FAILURE = "me.korata.finecraft.FAILURE";
+	public static final String ACTION_UPDATE = "com.mcpeturk.dilsecici.UPDATE";
+	public static final String ACTION_PROGRESS = "com.mcpeturk.dilsecici.PROGRESS";
+	public static final String ACTION_PROGRESS_MESSAGE = "com.mcpeturk.dilsecici.PROGRESS_MESSAGE";
+	public static final String ACTION_FAILURE = "com.mcpeturk.dilsecici.FAILURE";
 	public static final int SUCCESS = -1;
 	public static final int FAILURE = -2;
 	public static final int INDETERMINATE = -3;
@@ -71,7 +71,7 @@ public class UnzipService extends IntentService {
 	}
 
 	public UnzipService() {
-		super("me.korata.finecraft.UnzipService");
+		super("com.mcpeturk.dilsecici.UnzipService");
 	}
 
 	@Override
@@ -105,7 +105,7 @@ public class UnzipService extends IntentService {
 	}
 
 	private Notification.Builder createNotification() {
-		String name = "me.korata.finecraft";
+		String name = "com.mcpeturk.dilsecici";
 		String channelId = "Minetest channel";
 		String description = "notifications from Minetest";
 		Notification.Builder builder;
